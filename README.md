@@ -10,16 +10,39 @@
     - 保持程式碼簡潔和可維護性
 ``` c
 #include <stdio.h>
+#include <windows.h>
 
 int main(int argc, char **argv) {
-    // 宣告一個大小為 1 的 unsigned long 陣列
-    unsigned long a[1];
-    
-    // 嘗試訪問陣列越界的位置（第4個元素），這是一個緩衝區溢位
-    a[3] = 0x7fffff7b36cebUL;
-    
-    // 程式結束
-    return 0;
+  // 設置控制台輸出編碼為 UTF-8
+  SetConsoleOutputCP(65001);
+
+  // 宣告一個大小為 1 的 unsigned long 陣列
+  unsigned long a[1];
+  printf("陣列 a 的大小為: %d\n", sizeof(a) / sizeof(unsigned long));
+  printf("正在嘗試訪問陣列索引 3 (超出範圍)\n");
+
+  // 在寫入前顯示記憶體內容
+  printf("寫入前的記憶體內容:\n");
+  for (int i = 0; i < 4; i++) {
+    printf("記憶體位置 a[%d]: %lu\n", i, *((unsigned long *)a + i));
+  }
+
+  // 緩衝區溢位操作
+  printf("\n執行緩衝區溢位寫入...\n");
+  a[3] = 0x7fffff7b36cebUL;
+
+  // 在寫入後顯示記憶體內容
+  printf("\n寫入後的記憶體內容:\n");
+  for (int i = 0; i < 4; i++) {
+    printf("記憶體位置 a[%d]: %lu\n", i, *((unsigned long *)a + i));
+  }
+
+  printf("\n警告：這個程式存在緩衝區溢位風險！\n");
+  printf("陣列大小為 1，但試圖訪問索引 3\n");
+
+  return 0;
+}
+
 }
 ```
 #### A1.使用安全的陣列大小和邊界檢查：
@@ -28,7 +51,7 @@ int main(int argc, char **argv) {
 #define ARRAY_SIZE 4
 
 int main(int argc, char **argv) {
-    unsigned long a[ARRAY_SIZE];
+    unsigned long long a[ARRAY_SIZE];
     int index = 3;
     
     // 檢查陣列邊界
