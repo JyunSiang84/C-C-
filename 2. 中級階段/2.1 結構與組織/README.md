@@ -192,6 +192,172 @@ void setup() {
 - 更不容易出錯（確保正確初始化）
 - 更容易維護（初始化邏輯集中在一處）
 
+## 1.5 結構創建變數
+### 1.5.1 LED 控制系統
+```cpp
+// 方法 1：分開寫
+struct LEDState {
+    bool isOn;
+    uint8_t brightness;
+    unsigned long lastChangeTime;
+};
+
+class LEDController {
+private:
+    LEDState ledState;  // 在需要時宣告變數
+    int ledPin;
+    
+public:
+    LEDController(int pin) {
+        ledPin = pin;
+        ledState.isOn = false;
+        ledState.brightness = 0;
+        ledState.lastChangeTime = 0;
+    }
+};
+
+// 方法 2：合併寫
+class LEDController {
+private:
+    struct LEDState {
+        bool isOn = false;
+        uint8_t brightness = 0;
+        unsigned long lastChangeTime = 0;
+    } ledState;  // 直接創建變數並使用預設值
+    int ledPin;
+    
+public:
+    LEDController(int pin) : ledPin(pin) { }  // 結構已經自動初始化
+};
+```
+### 1.5.2 溫度感測器系統
+```cpp
+// 方法 1：分開寫 - 適合需要多個感測器的情況
+struct SensorData {
+    float temperature;
+    float humidity;
+    unsigned long readTime;
+    bool isValid;
+};
+
+class TemperatureMeter {
+private:
+    SensorData sensor1;
+    SensorData sensor2;  // 可以輕易創建多個實例
+    SensorData sensor3;
+};
+
+// 方法 2：合併寫 - 適合只需要單一感測器的情況
+class TemperatureMeter {
+private:
+    struct SensorData {
+        float temperature = 0.0f;
+        float humidity = 0.0f;
+        unsigned long readTime = 0;
+        bool isValid = false;
+    } sensorData;  // 直接創建單一實例
+};
+```
+### 1.5.3 計時器系統
+```cpp
+// 方法 1：分開寫 - 結構可以在不同地方重用
+struct Timer {
+    unsigned long startTime;
+    unsigned long duration;
+    bool isRunning;
+    bool isComplete;
+};
+
+// 可以在不同的類中使用
+class StopWatch {
+    Timer timer;
+};
+
+class Countdown {
+    Timer timer;
+};
+
+// 方法 2：合併寫 - 結構與特定用途緊密綁定
+class StopWatch {
+private:
+    struct StopWatchTimer {
+        unsigned long startTime = 0;
+        unsigned long duration = 0;
+        bool isRunning = false;
+        bool isComplete = false;
+        bool isPaused = false;  // 可以加入特定於這個用途的額外屬性
+    } timer;
+};
+```
+### 1.5.4 優缺點比較：
+#### 分開寫
+優點：
+1. 結構定義更清晰，易於閱讀
+2. 可以在多個地方重用同一個結構
+3. 更容易進行文檔註解
+4. 便於創建多個實例
+5. 程式碼組織更有彈性
+
+缺點：
+1. 需要額外的初始化步驟
+2. 程式碼稍微冗長一些
+3. 可能需要在多處維護預設值
+
+### 合併寫
+優點：
+1. 程式碼更緊湊
+2. 可以直接設定預設值
+3. 變數宣告和結構定義在一起，關係明確
+4. 適合只需要單一實例的情況
+5. 可以直接在結構中加入特定用途的成員
+
+缺點：
+1. 結構難以重用
+2. 可能較難閱讀和理解
+3. 不適合需要多個實例的情況
+4. 文檔註解可能較難組織
+
+#### 使用建議：
+1. 當需要在多個地方使用相同的數據結構時，需要重用性，選擇分開寫方法
+```cpp
+struct Point {
+    int x;
+    int y;
+};
+// 可以在多處使用
+Point startPoint;
+Point endPoint;
+Point controlPoints[10];
+```
+2. 當結構僅用於特定類別的內部實現時，需要封裝性，選擇合併寫方法
+```cpp
+class GameCharacter {
+private:
+    struct Stats {
+        int health = 100;
+        int mana = 100;
+        int level = 1;
+    } characterStats;
+};
+```
+3. 根據初始化需求選擇：
+```cpp
+// 如果需要動態初始化，使用方法 1
+struct ConfigData {
+    int value;
+    String name;
+};
+ConfigData config;
+config.value = readFromStorage();
+config.name = getUserInput();
+
+// 如果有固定的預設值，使用方法 2
+struct {
+    int value = 42;
+    String name = "default";
+} config;
+```
+
 # 2. enum 列舉
 # 3. 函數設計
 # 4. 作用域和生命週期
