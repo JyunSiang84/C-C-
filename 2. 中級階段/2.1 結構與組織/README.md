@@ -361,3 +361,71 @@ struct {
 # 2. enum 列舉
 # 3. 函數設計
 # 4. 作用域和生命週期
+## 4.1 作用域 (Scope)
+想像你正在一棟有多個房間的房子裡。每個房間就像程式中的不同作用域，而變數就像房間裡的物品。
+```cpp
+int globalLight = 100;  // 全域變數，像是房子的大門口的燈
+
+void setup() {
+    int roomLight = 50;  // 區域變數，只在 setup 這個"房間"裡可見
+    
+    if (roomLight > 30) {
+        int nightLight = 10;  // 更小的作用域，只在這個 if 區塊內可見
+        globalLight = nightLight;  // 可以改變全域變數
+    }
+    // 這裡無法使用 nightLight
+    
+    Serial.println(roomLight);    // 可以使用
+    Serial.println(globalLight);  // 可以使用
+    // Serial.println(nightLight);  // 錯誤！超出作用域
+}
+
+void loop() {
+    // Serial.println(roomLight);    // 錯誤！無法看到 setup 裡的變數
+    Serial.println(globalLight);  // 可以使用全域變數
+}
+```
+### 4.1.1 全域作用域：
+```cpp
+int globalVar = 0;  // 全域變數，整個程式都可以使用
+
+void function1() {
+    globalVar = 1;  // 可以使用
+}
+
+void function2() {
+    globalVar = 2;  // 也可以使用
+}
+```
+### 4.1.2 函數作用域：
+```cpp
+void someFunction() {
+    int localVar = 10;  // 區域變數，只在這個函數內有效
+    
+    for (int i = 0; i < 5; i++) {
+        localVar++;  // 可以使用函數內的變數
+    }
+}
+// localVar 在這裡已經不存在了
+```
+### 4.1.3 區塊作用域：
+```cpp
+void checkTemperature() {
+    int temp = 25;
+    
+    if (temp > 20) {
+        int warning = 1;  // 只在 if 區塊內有效
+        Serial.println(warning);
+    }
+    // warning 在這裡已經不能使用了
+    
+    Serial.println(temp);  // 仍然可以使用
+}
+```
+
+## 4.2 生命週期 (Lifetime)
+生命週期就像物品在房間裡存在的時間。讓我們看看不同類型變數的生命週期：
+### 4.2.1 全域變數的生命週期：
+### 4.2.2 區域變數的生命週期：
+### 4.2.3 靜態區域變數：
+### 4.2.4 實際應用例子
