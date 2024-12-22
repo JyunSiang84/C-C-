@@ -1,7 +1,56 @@
 # 記憶體基礎
+## 1. 基本數據類型與記憶體大小
+Arduino 中最常用的數據類型：
+```cpp
+// 整數類型
+boolean    // 1 byte (8 bits)  範圍: true/false
+byte       // 1 byte (8 bits)  範圍: 0-255
+char       // 1 byte (8 bits)  範圍: -128 到 127
+int        // 2 bytes (16 bits) 範圍: -32,768 到 32,767
+long       // 4 bytes (32 bits) 範圍: -2,147,483,648 到 2,147,483,647
+
+// 浮點數類型
+float      // 4 bytes (32 bits) 範圍: -3.4028235E+38 到 3.4028235E+38
+double     // 4 bytes (32 bits) 在 Arduino 中與 float 相同
+
+// 字串類型
+String     // 動態大小，基本overhead為 6-7 bytes，加上實際字串長度
+```
+為了更好理解這些數據類型，讓我們看一個實際例子：
+```cpp
+void setup() {
+    Serial.begin(9600);
+    
+    // 讓我們看看不同數據類型如何使用記憶體
+    byte age = 25;            // 只用 1 byte 就足夠儲存年齡
+    int temperature = -10;    // 需要 2 bytes 因為可能有負值
+    long population = 23000000; // 需要 4 bytes 存儲大數字
+    
+    // 印出各變數的值與大小
+    Serial.print("age（1 byte）: ");
+    Serial.println(age);
+    Serial.print("temperature（2 bytes）: ");
+    Serial.println(temperature);
+    Serial.print("population（4 bytes）: ");
+    Serial.println(population);
+}
+
+void loop() {
+}
+```
+
+## 2. 變數儲存方式
+Arduino 使用兩種主要的記憶體儲存方式：
+```cpp
+```
+## 3. 全域變數 vs 區域變數
+## 4. RAM vs Flash 基本概念
+## 5. Arduino 記憶體架構基礎
+
 
 ## C語言常發生問題
-
+```cpp
+```
 ### A. Buffer overflow Problem
     - 永遠檢查陣列邊界
     - 使用安全的函式
