@@ -361,6 +361,17 @@ struct {
 # 2. enum 列舉
 # 3. 函數設計
 # 4. 作用域和生命週期
+作用域和生命週期的重要性：
+1. 記憶體管理：
+- 區域變數在不需要時自動釋放記憶體
+- 避免不必要的全域變數佔用記憶體
+2. 程式可靠性：
+- 適當的作用域可以防止變數被意外修改
+- 清晰的生命週期有助於避免記憶體洩漏
+3. 代碼組織：
+- 有助於編寫更容易維護的程式
+- 減少變數名稱衝突
+
 ## 4.1 作用域 (Scope)
 想像你正在一棟有多個房間的房子裡。每個房間就像程式中的不同作用域，而變數就像房間裡的物品。
 ```cpp
@@ -426,6 +437,52 @@ void checkTemperature() {
 ## 4.2 生命週期 (Lifetime)
 生命週期就像物品在房間裡存在的時間。讓我們看看不同類型變數的生命週期：
 ### 4.2.1 全域變數的生命週期：
+```cpp
+int systemUptime = 0;  // 整個程式執行期間都存在
+
+void setup() {
+    systemUptime = 1;  // 可以使用
+}
+
+void loop() {
+    systemUptime++;    // 一直都存在
+}
+```
 ### 4.2.2 區域變數的生命週期：
+```cpp
+void countDown() {
+    int counter = 10;  // 每次函數呼叫時建立
+    
+    while (counter > 0) {
+        Serial.println(counter);
+        counter--;
+    }
+}   // counter 的生命在這裡結束
+```
 ### 4.2.3 靜態區域變數：
+```cpp
+void countButton() {
+    static int pressCount = 0;  // 只初始化一次，但保持值
+    
+    pressCount++;  // 值會保存到下次函數呼叫
+    Serial.println(pressCount);
+}
+```
 ### 4.2.4 實際應用例子
+```cpp
+class ButtonHandler {
+private:
+    static const int DEBOUNCE_TIME = 50;  // 靜態常數
+    int buttonPin;                        // 類別成員變數
+    
+    void handlePress() {
+        static unsigned long lastPressTime = 0;  // 靜態區域變數
+        unsigned long currentTime = millis();    // 區域變數
+        
+        if (currentTime - lastPressTime > DEBOUNCE_TIME) {
+            // 處理按鈕事件
+            lastPressTime = currentTime;
+        }
+    }
+};
+```
