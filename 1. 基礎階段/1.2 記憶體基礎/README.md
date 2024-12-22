@@ -42,8 +42,70 @@ void loop() {
 ## 2. 變數儲存方式
 Arduino 使用兩種主要的記憶體儲存方式：
 ```cpp
+// 靜態儲存（編譯時決定）
+const int SERVO_PIN = 9;  // 儲存在 Flash 記憶體
+
+// 動態儲存（運行時使用）
+int sensorValue;         // 儲存在 RAM
+```
+這裡有個更詳細的例子：
+```cpp
+// 全域變數（存在 RAM 的資料段）
+int globalVar = 100;
+
+void setup() {
+    Serial.begin(9600);
+    
+    // 區域變數（存在 RAM 的堆疊段）
+    int localVar = 50;
+    
+    // 常數（存在 Flash）
+    const float PI = 3.14159;
+    
+    Serial.println("記憶體位置示範：");
+    Serial.print("globalVar 位置：");
+    Serial.println((int)&globalVar);
+    Serial.print("localVar 位置：");
+    Serial.println((int)&localVar);
+}
 ```
 ## 3. 全域變數 vs 區域變數
+讓我們透過一個實際例子來理解差異：
+```cpp
+// 全域變數：整個程式都可以訪問
+int globalTemp = 25;  // 存在於 RAM 中直到程式結束
+
+void showTemperature() {
+    // 可以訪問全域變數
+    Serial.print("在另一個函數中的全域溫度：");
+    Serial.println(globalTemp);
+    
+    // 無法訪問 localTemp，因為它是 setup 的區域變數
+    // 這行會造成編譯錯誤：
+    // Serial.println(localTemp);
+}
+
+void setup() {
+    Serial.begin(9600);
+    
+    // 區域變數：只在 setup 函數中有效
+    int localTemp = 30;  // 當 setup 執行完就會被釋放
+    
+    Serial.print("全域溫度：");
+    Serial.println(globalTemp);
+    
+    Serial.print("區域溫度：");
+    Serial.println(localTemp);
+    
+    // 呼叫函數來展示變數範圍
+    showTemperature();
+}
+
+
+
+void loop() {
+}
+```
 ## 4. RAM vs Flash 基本概念
 ## 5. Arduino 記憶體架構基礎
 
